@@ -16,9 +16,21 @@ interface imageParams {
 images.get('/', async (req: imageParams, res) => {
   const { filename, width, height } = req.query;
 
-  const path = resolve(`assets/${width}-${height}-${filename}`);
+  if (!filename) {
+    return res.send('images endpoint');
+  }
 
-  // Check if file already exists
+  if (!existsSync(`assets/${filename}`)) {
+    return res.status(404).send('Error: Image Not Found');
+  }
+
+  if (!width || !height) {
+    return res.sendFile(resolve(`assets/${filename}`));
+  }
+
+  const path = resolve(`assets/${filename}(${width}x${height}).jpg`);
+
+  // Check if resized file already exists
   if (!existsSync(path)) {
     // If not, resize original file
     sharp(`assets/${filename}`)
@@ -26,7 +38,7 @@ images.get('/', async (req: imageParams, res) => {
       // Save resized file and send it
       .toFile(path, (err) => {
         if (err) {
-          res.send(err).status(500);
+          res.status(500).send(err);
         } else {
           res.sendFile(resolve(path));
         }

@@ -9,15 +9,10 @@ describe('Test endpoint responses', () => {
     expect(response.status).toBe(200);
   });
 
-  it('returns 404 when non-existent image is provided', async () => {
-    const response = await request.get('/api/images?filename=notfound.jpg');
-    expect(response.status).toBe(404);
-  });
-
   it('returns original file when no resize params sent', async () => {
     const response = await request.get('/api/images?filename=fjord.jpg');
     expect(response.status).toBe(200);
-    expect(response.header['content-length']).toBe('2421874');
+    expect(response.header['content-length']).toBe('442951');
   });
 
   it('returns successfully when resize params are sent', async () => {
@@ -26,5 +21,10 @@ describe('Test endpoint responses', () => {
     );
     expect(response.status).toBe(200);
     expect(response.header['content-length']).toBe('9379');
+  });
+
+  it('returns 404 when non-existent image is provided', async () => {
+    const response = await request.get('/api/images?filename=notfound.jpg');
+    expect(response.status).toBe(404);
   });
 });
